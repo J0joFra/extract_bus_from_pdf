@@ -4,7 +4,7 @@ import re
 
 # Percorso del file PDF
 pdf_path = r"C:\Users\JoaquimFrancalanci\Downloads\Linea_E014 sett-2024.pdf"
-output_csv = 'orari_guardamiglio_codogno_sc5.csv'
+output_csv = 'orari_guardamiglio_codogno.csv'
 
 # Funzione per estrarre testo dal PDF
 def extract_text_from_pdf(pdf_path):
