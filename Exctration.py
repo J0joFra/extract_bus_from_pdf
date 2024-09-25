@@ -16,7 +16,7 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
         return text
 
-# Funzione per trovare gli orari tra Guardamiglio e Codogno
+# Funzione per trovare gli orari di andata e ritorno tra Guardamiglio e Codogno
 def extract_guardamiglio_codogno_times(text):
     # Regex per trovare le righe con Guardamiglio e Codogno Ferrovia
     pattern = r'(GUARDAMIGLIO-Via De Gasperi/fr Via Kennedy.*?\d{2}:\d{2})|(CODOGNO-Ferrovia.*?\d{2}:\d{2})'
@@ -24,11 +24,31 @@ def extract_guardamiglio_codogno_times(text):
     
     # Filtrare e riorganizzare i risultati
     results = []
+    guardamiglio_times = []
+    codogno_times = []
+    
     for match in matches:
         # Filtra la tupla e prendi solo l'elemento non vuoto
         row = [m for m in match if m]
         if row:
-            results.append(row[0])
+            # Determina se è Guardamiglio o Codogno
+            if "GUARDAMIGLIO" in row[0]:
+                guardamiglio_times.append(row[0])
+            elif "CODOGNO" in row[0]:
+                codogno_times.append(row[0])
+    
+    # Abbina gli orari andata e ritorno
+    for i in range(min(len(guardamiglio_times), len(codogno_times))):
+        if i % 2 == 0:
+            # Andata: Guardamiglio -> Codogno
+            guardamiglio_time = re.search(r'\d{2}:\d{2}', guardamiglio_times[i]).group()
+            codogno_time = re.search(r'\d{2}:\d{2}', codogno_times[i]).group()
+            results.append(["Guardamiglio", guardamiglio_time, "Codogno", codogno_time])
+        else:
+            # Ritorno: Codogno -> Guardamiglio
+            codogno_time = re.search(r'\d{2}:\d{2}', codogno_times[i]).group()
+            guardamiglio_time = re.search(r'\d{2}:\d{2}', guardamiglio_times[i]).group()
+            results.append(["Codogno", codogno_time, "Guardamiglio", guardamiglio_time])
     
     return results
 
@@ -36,9 +56,9 @@ def extract_guardamiglio_codogno_times(text):
 def write_to_csv(data, output_file):
     with open(output_file, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Descrizione', 'Orario'])  # Intestazione del CSV
+        writer.writerow(['Partenza', 'Orario', 'Arrivo', 'Orario'])  # Intestazione del CSV
         for row in data:
-            writer.writerow(row.split())
+            writer.writerow(row)
 
 # Estrarre testo dal PDF
 pdf_text = extract_text_from_pdf(pdf_path)
