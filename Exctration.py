@@ -4,7 +4,7 @@ import re
 
 # Percorso del file PDF
 pdf_path = r"C:\Users\JoaquimFrancalanci\Downloads\Linea_E014 sett-2024.pdf"
-output_csv = 'orari_guardamiglio_codogno.csv'
+output_csv = 'orari_guardamiglio_codogno_sc5.csv'
 
 # Funzione per estrarre testo dal PDF
 def extract_text_from_pdf(pdf_path):
@@ -16,10 +16,10 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
         return text
 
-# Funzione per trovare gli orari di andata e ritorno tra Guardamiglio e Codogno
+# Funzione per trovare gli orari con la validità SC5 tra Guardamiglio e Codogno
 def extract_guardamiglio_codogno_times(text):
-    # Regex per trovare le righe con Guardamiglio e Codogno Ferrovia
-    pattern = r'(GUARDAMIGLIO-Via De Gasperi/fr Via Kennedy.*?\d{2}:\d{2})|(CODOGNO-Ferrovia.*?\d{2}:\d{2})'
+    # Regex per trovare le righe con Guardamiglio e Codogno Ferrovia che includono la validità SC5
+    pattern = r'(GUARDAMIGLIO-Via De Gasperi/fr Via Kennedy.*?SC5.*?\d{2}:\d{2})|(CODOGNO-Ferrovia.*?SC5.*?\d{2}:\d{2})'
     matches = re.findall(pattern, text)
     
     # Filtrare e riorganizzare i risultati
@@ -63,7 +63,7 @@ def write_to_csv(data, output_file):
 # Estrarre testo dal PDF
 pdf_text = extract_text_from_pdf(pdf_path)
 
-# Estrarre gli orari tra Guardamiglio e Codogno Ferrovia
+# Estrarre gli orari tra Guardamiglio e Codogno Ferrovia solo per SC5
 orari_guardamiglio_codogno = extract_guardamiglio_codogno_times(pdf_text)
 
 # Scrivere il risultato nel file CSV
