@@ -19,7 +19,7 @@ def extract_text_from_pdf(pdf_path):
 # Funzione per trovare gli orari tra Guardamiglio e Codogno
 def extract_guardamiglio_codogno_times(text):
     # Regex per trovare le righe con Guardamiglio e Codogno Ferrovia
-    pattern = r'(GUARDAMIGLIO-Via.*?\d{2}:\d{2})|(CODOGNO-Ferrovia.*?\d{2}:\d{2})'
+    pattern = r'(GUARDAMIGLIO-Via De Gasperi/fr Via Kennedy.*?\d{2}:\d{2})|(CODOGNO-Ferrovia.*?\d{2}:\d{2})'
     matches = re.findall(pattern, text)
     
     # Filtrare e riorganizzare i risultati
