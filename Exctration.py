@@ -16,10 +16,10 @@ def extract_text_from_pdf(pdf_path):
             text += page.extract_text()
         return text
 
-# Funzione per trovare gli orari con la validità SC5 tra Guardamiglio e Codogno
+# Funzione per trovare gli orari SC5 tra Guardamiglio e Codogno
 def extract_guardamiglio_codogno_times(text):
-    # Regex per trovare le righe con Guardamiglio e Codogno Ferrovia che includono la validità SC5
-    pattern = r'(GUARDAMIGLIO-Via De Gasperi/fr Via Kennedy.*?SC5.*?\d{2}:\d{2})|(CODOGNO-Ferrovia.*?SC5.*?\d{2}:\d{2})'
+    # Identifica i blocchi di testo dove appaiono gli orari e la validità SC5
+    pattern = r'(GUARDAMIGLIO-Via De Gasperi/fr Via Kennedy.*?SC5.*?(\d{2}:\d{2}))|(CODOGNO-Ferrovia.*?SC5.*?(\d{2}:\d{2}))'
     matches = re.findall(pattern, text)
     
     # Filtrare e riorganizzare i risultati
@@ -28,27 +28,22 @@ def extract_guardamiglio_codogno_times(text):
     codogno_times = []
     
     for match in matches:
-        # Filtra la tupla e prendi solo l'elemento non vuoto
-        row = [m for m in match if m]
+        row = [m for m in match if m]  # Filtra i match non vuoti
         if row:
-            # Determina se è Guardamiglio o Codogno
+            # Se l'orario è di Guardamiglio
             if "GUARDAMIGLIO" in row[0]:
-                guardamiglio_times.append(row[0])
+                guardamiglio_times.append(row[1])  # Aggiungi l'orario trovato
             elif "CODOGNO" in row[0]:
-                codogno_times.append(row[0])
+                codogno_times.append(row[1])  # Aggiungi l'orario trovato
     
     # Abbina gli orari andata e ritorno
     for i in range(min(len(guardamiglio_times), len(codogno_times))):
         if i % 2 == 0:
             # Andata: Guardamiglio -> Codogno
-            guardamiglio_time = re.search(r'\d{2}:\d{2}', guardamiglio_times[i]).group()
-            codogno_time = re.search(r'\d{2}:\d{2}', codogno_times[i]).group()
-            results.append(["Guardamiglio", guardamiglio_time, "Codogno", codogno_time])
+            results.append(["Guardamiglio", guardamiglio_times[i], "Codogno", codogno_times[i]])
         else:
             # Ritorno: Codogno -> Guardamiglio
-            codogno_time = re.search(r'\d{2}:\d{2}', codogno_times[i]).group()
-            guardamiglio_time = re.search(r'\d{2}:\d{2}', guardamiglio_times[i]).group()
-            results.append(["Codogno", codogno_time, "Guardamiglio", guardamiglio_time])
+            results.append(["Codogno", codogno_times[i], "Guardamiglio", guardamiglio_times[i]])
     
     return results
 
