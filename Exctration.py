@@ -3,7 +3,7 @@ import csv
 import re
 
 # Percorso del file PDF
-pdf_path = '/mnt/data/Linea_E014 sett-2024.pdf'
+pdf_path = r"C:\Users\JoaquimFrancalanci\Downloads\Linea_E014 sett-2024.pdf"
 output_csv = 'orari_guardamiglio_codogno.csv'
 
 # Funzione per estrarre testo dal PDF
